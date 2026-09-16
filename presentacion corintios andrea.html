@@ -1,0 +1,3720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f8fafc">
+  <title>II Corintios | PechaKucha Bíblico</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      overflow: hidden;
+      background: #0f172a;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app {
+      width: 100%;
+      height: 100dvh;
+      min-height: 100svh;
+      overflow: hidden;
+      background: #0f172a;
+    }
+
+    .viewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* =========================================================
+       SLIDES
+    ========================================================= */
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      transform: translate3d(45px,0,0) scale(.985);
+      transition:
+        opacity .55s cubic-bezier(.22,1,.36,1),
+        transform .55s cubic-bezier(.22,1,.36,1),
+        visibility .55s;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translate3d(0,0,0) scale(1);
+      pointer-events: auto;
+      z-index: 4;
+    }
+
+    .slide-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      padding:
+        max(72px, env(safe-area-inset-top))
+        clamp(16px,4vw,54px)
+        max(112px, calc(env(safe-area-inset-bottom) + 100px));
+    }
+
+    .slide-content::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .slide-content::-webkit-scrollbar-thumb {
+      background: rgba(15,23,42,.20);
+      border-radius: 999px;
+    }
+
+    /* =========================================================
+       BACKGROUND SCENES
+    ========================================================= */
+
+    .biblical-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .biblical-bg svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .scene-layer {
+      position: absolute;
+      transition: transform .25s ease-out;
+      will-change: transform;
+    }
+
+    .scene-layer-1 {
+      transform: translate3d(
+        calc(var(--mx, 0) * -9px),
+        calc(var(--my, 0) * -7px),
+        0
+      );
+    }
+
+    .scene-layer-2 {
+      transform: translate3d(
+        calc(var(--mx, 0) * 15px),
+        calc(var(--my, 0) * 11px),
+        0
+      );
+    }
+
+    .scene-layer-3 {
+      transform: translate3d(
+        calc(var(--mx, 0) * -22px),
+        calc(var(--my, 0) * 16px),
+        0
+      );
+    }
+
+    .float {
+      animation: floatObject 5s ease-in-out infinite;
+    }
+
+    .float-slow {
+      animation: floatObject 7s ease-in-out infinite;
+    }
+
+    .float-delay {
+      animation: floatObject 6s ease-in-out 1s infinite;
+    }
+
+    @keyframes floatObject {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-13px) rotate(1.5deg);
+      }
+    }
+
+    .pulse {
+      animation: pulseObject 2.3s ease-in-out infinite;
+    }
+
+    @keyframes pulseObject {
+      0%,100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.06);
+      }
+    }
+
+    .glow {
+      animation: glowObject 2.5s ease-in-out infinite;
+    }
+
+    @keyframes glowObject {
+      0%,100% {
+        filter: drop-shadow(0 0 8px rgba(250,204,21,.18));
+      }
+      50% {
+        filter: drop-shadow(0 0 25px rgba(250,204,21,.55));
+      }
+    }
+
+    .light-ray {
+      animation: rayMove 7s ease-in-out infinite alternate;
+      transform-origin: center;
+    }
+
+    @keyframes rayMove {
+      from {
+        transform: translateX(-15px) rotate(-3deg);
+        opacity: .16;
+      }
+      to {
+        transform: translateX(18px) rotate(3deg);
+        opacity: .34;
+      }
+    }
+
+    /* =========================================================
+       CARDS
+    ========================================================= */
+
+    .glass {
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,.75);
+      box-shadow: 0 22px 55px rgba(15,23,42,.13);
+    }
+
+    .dark-glass {
+      background: rgba(15,23,42,.84);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .interactive-card {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+      touch-action: manipulation;
+    }
+
+    .interactive-card::after {
+      content: "";
+      position: absolute;
+      inset: -120%;
+      background: linear-gradient(
+        110deg,
+        transparent 35%,
+        rgba(255,255,255,.4) 50%,
+        transparent 65%
+      );
+      transform: translateX(-60%);
+      transition: transform .7s ease;
+      pointer-events: none;
+    }
+
+    .interactive-card:hover::after {
+      transform: translateX(60%);
+    }
+
+    .interactive-card:hover {
+      transform: translateY(-6px) scale(1.015);
+      box-shadow: 0 25px 55px rgba(15,23,42,.17);
+    }
+
+    .interactive-card:active {
+      transform: scale(.98);
+    }
+
+    .reveal-extra {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+      overflow: hidden;
+      transition:
+        max-height .45s ease,
+        opacity .35s ease,
+        margin .35s ease;
+    }
+
+    .interactive-card.open .reveal-extra {
+      max-height: 260px;
+      opacity: 1;
+      margin-top: 14px;
+    }
+
+    .arrow-icon {
+      transition: transform .3s ease;
+    }
+
+    .interactive-card.open .arrow-icon {
+      transform: rotate(180deg);
+    }
+
+    /* =========================================================
+       FLIP CARDS
+    ========================================================= */
+
+    .flip-card {
+      position: relative;
+      height: 185px;
+      perspective: 1000px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform .6s cubic-bezier(.2,.8,.2,1);
+      transform-style: preserve-3d;
+    }
+
+    .flip-card.flipped .flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-front,
+    .flip-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 1.5rem;
+    }
+
+    .flip-back {
+      transform: rotateY(180deg);
+    }
+
+    /* =========================================================
+       POPUP DETAIL
+    ========================================================= */
+
+    .detail-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(15,23,42,.62);
+      backdrop-filter: blur(12px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .25s ease, visibility .25s;
+    }
+
+    .detail-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .detail-box {
+      width: min(540px, 100%);
+      max-height: min(78dvh, 660px);
+      overflow-y: auto;
+      border-radius: 2rem;
+      background: white;
+      padding: 26px;
+      box-shadow: 0 40px 100px rgba(0,0,0,.32);
+      transform: scale(.92) translateY(20px);
+      transition: transform .3s ease;
+    }
+
+    .detail-modal.open .detail-box {
+      transform: scale(1) translateY(0);
+    }
+
+    /* =========================================================
+       BIBLE SCROLL
+    ========================================================= */
+
+    .scroll-paper {
+      position: relative;
+      background:
+        linear-gradient(90deg,
+          rgba(180,120,60,.12),
+          transparent 7%,
+          transparent 93%,
+          rgba(180,120,60,.12)
+        ),
+        #fff9df;
+      border: 1px solid #ecd7a0;
+      box-shadow: 0 20px 50px rgba(120,70,20,.16);
+    }
+
+    .scroll-paper::before,
+    .scroll-paper::after {
+      content: "";
+      position: absolute;
+      left: -10px;
+      right: -10px;
+      height: 17px;
+      border-radius: 999px;
+      background: linear-gradient(90deg,#9a602c,#d09a58,#9a602c);
+      box-shadow: 0 4px 10px rgba(0,0,0,.18);
+    }
+
+    .scroll-paper::before {
+      top: -7px;
+    }
+
+    .scroll-paper::after {
+      bottom: -7px;
+    }
+
+    /* =========================================================
+       NAVIGATION
+    ========================================================= */
+
+    .top-ui,
+    .bottom-ui {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      z-index: 80;
+      pointer-events: none;
+    }
+
+    .top-ui {
+      top: max(12px, env(safe-area-inset-top));
+    }
+
+    .bottom-ui {
+      bottom: max(10px, env(safe-area-inset-bottom));
+    }
+
+    .nav-button {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.16);
+      color: #fff;
+      font-size: 27px;
+      font-weight: 900;
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    .nav-button:hover {
+      transform: scale(1.08);
+      background: rgba(255,255,255,.25);
+    }
+
+    .nav-button:active {
+      transform: scale(.94);
+    }
+
+    .bullet {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.28);
+      border: 1px solid rgba(255,255,255,.28);
+      flex: 0 0 auto;
+      transition: all .25s ease;
+    }
+
+    .bullet.active {
+      width: 25px;
+      background: white;
+      border-color: white;
+    }
+
+    .timer-ring {
+      --percent: 0%;
+      background:
+        conic-gradient(
+          white var(--percent),
+          rgba(255,255,255,.16) 0
+        );
+    }
+
+    .quiz-option {
+      transition:
+        transform .2s ease,
+        background .2s ease,
+        border .2s ease;
+    }
+
+    .quiz-option:hover {
+      transform: translateY(-2px);
+    }
+
+    .quiz-option.correct {
+      background: #dcfce7 !important;
+      color: #166534 !important;
+      border-color: #22c55e !important;
+    }
+
+    .quiz-option.wrong {
+      background: #fee2e2 !important;
+      color: #991b1b !important;
+      border-color: #ef4444 !important;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 768px) {
+      .slide-content {
+        padding-left: 14px;
+        padding-right: 14px;
+        padding-bottom: max(116px, calc(env(safe-area-inset-bottom) + 108px));
+      }
+
+      .flip-card {
+        height: 155px;
+      }
+
+      .mobile-hide {
+        display: none !important;
+      }
+
+      .interactive-card:hover {
+        transform: none;
+      }
+
+      .biblical-bg .hide-mobile-bg {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .slide-content {
+        padding-top: max(68px, env(safe-area-inset-top));
+      }
+
+      .flip-card {
+        height: 145px;
+      }
+
+      .detail-box {
+        padding: 20px;
+        border-radius: 1.5rem;
+      }
+    }
+
+    @media (max-height: 660px) {
+      .slide-content {
+        padding-top: 66px;
+        padding-bottom: 104px;
+      }
+
+      .compact-hide {
+        display: none !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <main id="viewport" class="viewport">
+
+    <!-- ========================================================
+         01 PORTADA
+    ========================================================= -->
+    <section class="slide active bg-gradient-to-br from-amber-50 via-violet-50 to-sky-100" data-title="II Corintios">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c7d2fe"/>
+              <stop offset="58%" stop-color="#fef3c7"/>
+              <stop offset="100%" stop-color="#fdba74"/>
+            </linearGradient>
+          </defs>
+
+          <rect width="1600" height="900" fill="url(#sky1)"/>
+
+          <g class="light-ray">
+            <path d="M840 -40 L1180 900 L900 900 Z" fill="#fff" opacity=".26"/>
+            <path d="M660 -40 L810 900 L610 900 Z" fill="#fff" opacity=".18"/>
+          </g>
+
+          <circle cx="1260" cy="160" r="75" fill="#fde68a" opacity=".86"/>
+
+          <path d="M0 600 Q220 520 390 610 T760 590 T1100 625 T1600 560 L1600 900 L0 900Z"
+                fill="#c08457"/>
+
+          <path d="M0 665 Q270 600 520 665 T960 645 T1350 680 T1600 650 L1600 900 L0 900Z"
+                fill="#9a633f" opacity=".8"/>
+
+          <g opacity=".85" fill="#6b4423">
+            <rect x="120" y="480" width="18" height="175"/>
+            <path d="M85 500 Q129 425 173 500Z"/>
+            <rect x="1440" y="455" width="18" height="210"/>
+            <path d="M1404 480 Q1449 390 1494 480Z"/>
+          </g>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[3%] top-[16%] text-[85px] opacity-25 md:text-[140px]">
+          📜
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[6%] top-[18%] text-[70px] opacity-25 md:text-[120px]">
+          🕊️
+        </div>
+
+        <div class="scene-layer scene-layer-3 bottom-[12%] left-[52%] text-[65px] opacity-20 md:text-[100px]">
+          🏺
+        </div>
+      </div>
+
+      <div class="slide-content flex items-center">
+        <div class="mx-auto grid w-full max-w-6xl items-center gap-7 md:grid-cols-[1.08fr_.92fr]">
+
+          <div>
+            <span class="inline-flex rounded-full bg-violet-700 px-4 py-2 text-xs font-black uppercase tracking-[.18em] text-white shadow-xl">
+              PechaKucha Bíblico
+            </span>
+
+            <h1 class="mt-5 text-5xl font-black leading-[.92] text-slate-900 sm:text-6xl md:text-7xl lg:text-8xl">
+              II
+              <span class="block bg-gradient-to-r from-violet-700 via-fuchsia-600 to-sky-600 bg-clip-text text-transparent">
+                Corintios
+              </span>
+            </h1>
+
+            <p class="mt-5 max-w-xl text-xl font-black text-slate-700 md:text-2xl">
+              Fortaleza en las dificultades
+            </p>
+
+            <div class="mt-6 flex flex-wrap gap-2">
+              <button class="open-detail rounded-xl bg-white/85 px-4 py-2 font-black text-violet-700 shadow-lg"
+                      data-title="Fe"
+                      data-icon="🙏"
+                      data-text="II Corintios presenta la fe como confianza en Dios incluso cuando la vida atraviesa momentos difíciles.">
+                🙏 Fe
+              </button>
+
+              <button class="open-detail rounded-xl bg-white/85 px-4 py-2 font-black text-fuchsia-700 shadow-lg"
+                      data-title="Esperanza"
+                      data-icon="🌅"
+                      data-text="Pablo anima a mirar más allá de las dificultades presentes y mantener la esperanza.">
+                🌅 Esperanza
+              </button>
+
+              <button class="open-detail rounded-xl bg-white/85 px-4 py-2 font-black text-sky-700 shadow-lg"
+                      data-title="Perseverancia"
+                      data-icon="💪"
+                      data-text="Las dificultades no significan rendirse. Pablo muestra que se puede seguir adelante aun en medio de pruebas.">
+                💪 Perseverancia
+              </button>
+            </div>
+
+            <p class="mt-7 text-sm font-black uppercase tracking-[.22em] text-slate-500">
+              Presentado por Andrea
+            </p>
+          </div>
+
+          <div class="flex justify-center">
+            <button class="open-detail interactive-card glass relative grid aspect-square w-[270px] place-items-center rounded-[3rem] sm:w-[330px]"
+                    data-title="¿Qué es II Corintios?"
+                    data-icon="📖"
+                    data-text="Es una carta del apóstol Pablo dirigida a la comunidad cristiana de Corinto. En ella habla del consuelo, el perdón, la reconciliación, la generosidad y la fortaleza en medio de las dificultades.">
+
+              <div class="absolute -left-6 top-7 grid h-20 w-20 place-items-center rounded-3xl bg-amber-300 text-4xl shadow-xl float">
+                ✨
+              </div>
+
+              <div class="text-center">
+                <div class="glow text-[115px] md:text-[150px]">📖</div>
+                <p class="mt-1 text-xl font-black text-slate-800">
+                  Toca el libro
+                </p>
+                <p class="mt-1 text-sm font-bold text-violet-600">
+                  para descubrir
+                </p>
+              </div>
+
+              <div class="absolute -bottom-4 -right-4 grid h-20 w-20 place-items-center rounded-3xl bg-sky-300 text-4xl shadow-xl float-delay">
+                🕊️
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         02 CORINTO
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-sky-50 via-cyan-50 to-emerald-50" data-title="Corinto">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="sea2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#7dd3fc"/>
+              <stop offset="100%" stop-color="#dbeafe"/>
+            </linearGradient>
+          </defs>
+
+          <rect width="1600" height="900" fill="#e0f2fe"/>
+          <rect y="470" width="1600" height="430" fill="url(#sea2)"/>
+
+          <path d="M0 530 Q170 460 320 520 Q490 580 640 500 Q800 420 970 505 Q1170 610 1600 460 L1600 900 L0 900Z"
+                fill="#86efac" opacity=".85"/>
+
+          <g fill="#f8fafc" opacity=".85">
+            <rect x="240" y="365" width="250" height="120"/>
+            <rect x="260" y="310" width="28" height="175"/>
+            <rect x="310" y="310" width="28" height="175"/>
+            <rect x="360" y="310" width="28" height="175"/>
+            <rect x="410" y="310" width="28" height="175"/>
+            <rect x="460" y="310" width="28" height="175"/>
+            <polygon points="225,315 505,315 365,235"/>
+          </g>
+
+          <path d="M1220 590 L1340 590 L1310 555 L1245 555 Z"
+                fill="#8b5e3c"/>
+          <path d="M1280 555 L1280 430" stroke="#475569" stroke-width="8"/>
+          <path d="M1280 440 L1390 520 L1280 520Z" fill="#f8fafc" opacity=".9"/>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 right-[7%] top-[15%] text-[80px] opacity-25 md:text-[120px]">
+          ⚓
+        </div>
+
+        <div class="scene-layer scene-layer-2 bottom-[9%] left-[6%] text-[90px] opacity-20 md:text-[130px]">
+          ⛵
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+          <span class="text-sm font-black uppercase tracking-[.18em] text-sky-700">
+            Contexto histórico
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            ¿Dónde ocurre esta historia?
+          </h2>
+
+          <div class="mt-6 grid gap-5 lg:grid-cols-[1.05fr_.95fr]">
+
+            <button class="open-detail interactive-card relative min-h-[330px] overflow-hidden rounded-[2rem] bg-gradient-to-br from-sky-500/90 to-blue-700/90 p-6 text-left text-white shadow-2xl"
+                    data-title="Corinto"
+                    data-icon="🏛️"
+                    data-text="Corinto era una ciudad griega rica, cosmopolita y llena de actividad comercial. Personas de diferentes lugares y culturas llegaban constantemente. Para los cristianos era un ambiente desafiante para vivir su fe.">
+
+              <div class="absolute -right-8 -top-10 text-[180px] opacity-15">
+                🏛️
+              </div>
+
+              <div class="relative">
+                <span class="rounded-full bg-white/20 px-4 py-2 text-xs font-black uppercase">
+                  🇬🇷 Grecia · Siglo I d.C.
+                </span>
+
+                <div class="mt-24">
+                  <p class="text-5xl font-black">Corinto</p>
+                  <p class="mt-3 max-w-md text-lg font-bold text-sky-100">
+                    Rica, cosmopolita y llena de movimiento.
+                  </p>
+
+                  <div class="mt-5 inline-flex rounded-xl bg-white/15 px-4 py-2 text-sm font-black">
+                    👆 Toca para explorar
+                  </div>
+                </div>
+              </div>
+            </button>
+
+            <div class="space-y-3">
+
+              <button class="interactive-card glass w-full rounded-3xl p-5 text-left"
+                      data-reveal>
+                <div class="flex items-center gap-4">
+                  <div class="grid h-14 w-14 place-items-center rounded-2xl bg-sky-100 text-3xl">
+                    ⚓
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-xs font-black uppercase tracking-wider text-sky-600">
+                      Descubre
+                    </p>
+                    <h3 class="text-xl font-black text-slate-900">
+                      Comercio
+                    </h3>
+                  </div>
+                  <span class="arrow-icon text-xl">⌄</span>
+                </div>
+
+                <div class="reveal-extra text-sm font-semibold leading-relaxed text-slate-600">
+                  Corinto ocupaba una posición estratégica. Su actividad comercial hacía que personas e ideas circularan constantemente.
+                </div>
+              </button>
+
+              <button class="interactive-card glass w-full rounded-3xl p-5 text-left"
+                      data-reveal>
+                <div class="flex items-center gap-4">
+                  <div class="grid h-14 w-14 place-items-center rounded-2xl bg-emerald-100 text-3xl">
+                    🌍
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-xs font-black uppercase tracking-wider text-emerald-600">
+                      Descubre
+                    </p>
+                    <h3 class="text-xl font-black text-slate-900">
+                      Diversidad
+                    </h3>
+                  </div>
+                  <span class="arrow-icon text-xl">⌄</span>
+                </div>
+
+                <div class="reveal-extra text-sm font-semibold leading-relaxed text-slate-600">
+                  Judíos, griegos, esclavos y personas libres convivían en una misma ciudad y también formaban parte de la comunidad cristiana.
+                </div>
+              </button>
+
+              <button class="interactive-card rounded-3xl bg-slate-900 p-5 text-left text-white shadow-xl"
+                      data-reveal>
+                <div class="flex items-center justify-between gap-4">
+                  <div>
+                    <p class="text-xs font-black uppercase tracking-wider text-amber-300">
+                      Reto
+                    </p>
+                    <p class="mt-1 text-xl font-black">
+                      ¿Por qué era difícil vivir la fe allí?
+                    </p>
+                  </div>
+                  <span class="arrow-icon">⌄</span>
+                </div>
+
+                <div class="reveal-extra text-sm font-semibold text-slate-300">
+                  Porque la comunidad cristiana debía aprender a mantener sus valores en medio de conflictos, diferencias culturales y un ambiente con costumbres muy distintas.
+                </div>
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         03 PABLO
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-orange-50 via-amber-50 to-rose-50" data-title="Pablo">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#fff7ed"/>
+
+          <circle cx="1380" cy="120" r="170" fill="#fed7aa" opacity=".5"/>
+
+          <path d="M0 735 Q260 650 550 740 T1090 705 T1600 710 L1600 900 L0 900Z"
+                fill="#e7c69c" opacity=".8"/>
+
+          <g opacity=".22" fill="#7c2d12">
+            <rect x="1130" y="140" width="190" height="470" rx="12"/>
+            <rect x="1180" y="190" width="90" height="370"/>
+          </g>
+
+          <g opacity=".28">
+            <ellipse cx="290" cy="225" rx="180" ry="95" fill="#fde68a"/>
+            <path d="M160 280 Q290 140 420 280" fill="none" stroke="#92400e" stroke-width="15"/>
+          </g>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[5%] top-[20%] text-[90px] opacity-20 md:text-[140px]">
+          ✒️
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[7%] bottom-[12%] text-[90px] opacity-20 md:text-[150px]">
+          📜
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-orange-700">
+            El autor
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            ¿Quién escribió la carta?
+          </h2>
+
+          <div class="mt-6 grid items-center gap-6 md:grid-cols-[1.1fr_.9fr]">
+
+            <div>
+              <button class="open-detail interactive-card w-full rounded-[2rem] bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-left text-white shadow-xl"
+                      data-title="El apóstol Pablo"
+                      data-icon="✍️"
+                      data-text="Pablo fue fundador y pastor de la comunidad cristiana de Corinto. Por conocer bien a sus miembros, su carta tiene un tono personal, directo y lleno de preocupación por ellos.">
+
+                <p class="text-xs font-black uppercase tracking-wider text-orange-100">
+                  Escritor
+                </p>
+
+                <h3 class="mt-1 text-3xl font-black">
+                  El apóstol Pablo
+                </h3>
+
+                <p class="mt-2 font-semibold text-orange-50">
+                  Fundador y pastor de la iglesia de Corinto.
+                </p>
+
+                <p class="mt-4 text-sm font-black">
+                  👆 Toca para saber más
+                </p>
+              </button>
+
+              <div class="mt-4 grid gap-3 sm:grid-cols-2">
+
+                <button class="interactive-card glass rounded-3xl p-5 text-left"
+                        data-reveal>
+                  <div class="flex justify-between">
+                    <span class="text-4xl">⛪</span>
+                    <span class="arrow-icon">⌄</span>
+                  </div>
+                  <h3 class="mt-3 text-xl font-black text-slate-900">
+                    Fundó la iglesia
+                  </h3>
+
+                  <div class="reveal-extra text-sm font-semibold text-slate-600">
+                    Pablo estableció la comunidad cristiana de Corinto aproximadamente en el año 50 d.C.
+                  </div>
+                </button>
+
+                <button class="interactive-card glass rounded-3xl p-5 text-left"
+                        data-reveal>
+                  <div class="flex justify-between">
+                    <span class="text-4xl">❤️</span>
+                    <span class="arrow-icon">⌄</span>
+                  </div>
+                  <h3 class="mt-3 text-xl font-black text-slate-900">
+                    Relación cercana
+                  </h3>
+
+                  <div class="reveal-extra text-sm font-semibold text-slate-600">
+                    Conocía sus problemas, sus conflictos y sus avances, por eso escribe como alguien profundamente involucrado.
+                  </div>
+                </button>
+
+              </div>
+            </div>
+
+            <div class="flex justify-center">
+              <button class="open-detail interactive-card scroll-paper w-full max-w-[330px] rounded-3xl px-7 py-10 text-center"
+                      data-title="Las cartas de Pablo"
+                      data-icon="📜"
+                      data-text="Las cartas permitían a Pablo orientar a comunidades que se encontraban lejos. II Corintios refleja una comunicación muy personal entre Pablo y los creyentes de Corinto.">
+
+                <div class="float text-[110px]">📜</div>
+
+                <p class="mt-4 text-2xl font-black text-amber-900">
+                  Una carta personal
+                </p>
+
+                <p class="mt-3 font-semibold text-amber-800">
+                  Corregir · enseñar · animar
+                </p>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         04 DESTINATARIOS
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-violet-50 via-fuchsia-50 to-sky-50" data-title="Destinatarios">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#faf5ff"/>
+          <circle cx="200" cy="180" r="180" fill="#ddd6fe" opacity=".55"/>
+          <circle cx="1420" cy="660" r="250" fill="#bae6fd" opacity=".4"/>
+
+          <g opacity=".17" fill="#6d28d9">
+            <circle cx="250" cy="550" r="70"/>
+            <rect x="205" y="620" width="90" height="180" rx="45"/>
+
+            <circle cx="480" cy="520" r="70"/>
+            <rect x="435" y="590" width="90" height="210" rx="45"/>
+
+            <circle cx="1150" cy="525" r="70"/>
+            <rect x="1105" y="595" width="90" height="205" rx="45"/>
+
+            <circle cx="1370" cy="560" r="70"/>
+            <rect x="1325" y="630" width="90" height="170" rx="45"/>
+          </g>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[5%] top-[14%] text-[80px] opacity-20">
+          👥
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[5%] top-[13%] text-[80px] opacity-20">
+          🌍
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-fuchsia-700">
+            Los destinatarios
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            ¿A quién estaba dirigida?
+          </h2>
+
+          <p class="mt-3 max-w-3xl text-lg font-bold text-slate-600">
+            A una comunidad cristiana diversa que todavía estaba aprendiendo a vivir unida.
+          </p>
+
+          <div class="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+
+            <div class="flip-card" data-flip tabindex="0">
+              <div class="flip-inner">
+                <div class="flip-front glass grid place-items-center p-4 text-center">
+                  <div>
+                    <div class="text-5xl">🕍</div>
+                    <p class="mt-2 text-xl font-black text-violet-700">Judíos</p>
+                    <p class="mt-2 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                      Toca la tarjeta
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flip-back grid place-items-center bg-violet-600 p-4 text-center text-white shadow-xl">
+                  <p class="text-sm font-bold">
+                    Personas procedentes de la tradición judía que formaban parte de la comunidad.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flip-card" data-flip tabindex="0">
+              <div class="flip-inner">
+                <div class="flip-front glass grid place-items-center p-4 text-center">
+                  <div>
+                    <div class="text-5xl">🏛️</div>
+                    <p class="mt-2 text-xl font-black text-sky-700">Griegos</p>
+                    <p class="mt-2 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                      Toca la tarjeta
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flip-back grid place-items-center bg-sky-600 p-4 text-center text-white shadow-xl">
+                  <p class="text-sm font-bold">
+                    Personas de cultura griega que encontraron en la iglesia una comunidad nueva.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flip-card" data-flip tabindex="0">
+              <div class="flip-inner">
+                <div class="flip-front glass grid place-items-center p-4 text-center">
+                  <div>
+                    <div class="text-5xl">⛓️</div>
+                    <p class="mt-2 text-xl font-black text-rose-700">Esclavos</p>
+                    <p class="mt-2 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                      Toca la tarjeta
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flip-back grid place-items-center bg-rose-600 p-4 text-center text-white shadow-xl">
+                  <p class="text-sm font-bold">
+                    La comunidad incluía personas de condiciones sociales muy diferentes.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flip-card" data-flip tabindex="0">
+              <div class="flip-inner">
+                <div class="flip-front glass grid place-items-center p-4 text-center">
+                  <div>
+                    <div class="text-5xl">🙋</div>
+                    <p class="mt-2 text-xl font-black text-emerald-700">Libres</p>
+                    <p class="mt-2 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                      Toca la tarjeta
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flip-back grid place-items-center bg-emerald-600 p-4 text-center text-white shadow-xl">
+                  <p class="text-sm font-bold">
+                    La fe reunía personas de distintos grupos en una sola comunidad.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <button class="open-detail interactive-card mx-auto mt-5 block w-full max-w-4xl rounded-3xl bg-slate-900 p-5 text-left text-white"
+                  data-title="El reto de la diversidad"
+                  data-icon="🧩"
+                  data-text="La diversidad podía ser una riqueza, pero también producía desacuerdos. Pablo insiste en que todos debían aprender a convivir, perdonar y trabajar juntos.">
+
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-black uppercase tracking-wider text-fuchsia-300">
+                  El gran reto
+                </p>
+
+                <p class="mt-1 text-xl font-black">
+                  ¿Cómo convivir siendo tan diferentes?
+                </p>
+              </div>
+
+              <span class="text-3xl">🧩</span>
+            </div>
+          </button>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         05 RELACIÓN COMPLICADA
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50" data-title="Una relación complicada">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#fff7ed"/>
+
+          <path d="M0 760 Q350 650 750 750 T1600 710 L1600 900 L0 900Z"
+                fill="#fdba74" opacity=".34"/>
+
+          <g opacity=".14" stroke="#9f1239" stroke-width="14" fill="none">
+            <path d="M160 190 L500 530"/>
+            <path d="M500 190 L160 530"/>
+            <path d="M1090 200 Q1300 80 1450 240"/>
+          </g>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[6%] top-[18%] text-[90px] opacity-20">
+          💌
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[7%] bottom-[13%] text-[90px] opacity-20">
+          🤝
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-rose-700">
+            Pablo y los corintios
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            Una relación complicada
+          </h2>
+
+          <div class="mt-6 grid gap-4 md:grid-cols-3">
+
+            <button class="interactive-card rounded-[2rem] bg-red-500 p-6 text-left text-white shadow-xl"
+                    data-reveal>
+              <div class="flex justify-between">
+                <span class="text-5xl">⚠️</span>
+                <span class="arrow-icon text-2xl">⌄</span>
+              </div>
+
+              <h3 class="mt-5 text-2xl font-black">
+                Problemas
+              </h3>
+
+              <div class="reveal-extra text-sm font-semibold text-red-50">
+                Existían tensiones, conflictos internos y desacuerdos dentro de la comunidad.
+              </div>
+            </button>
+
+            <button class="interactive-card rounded-[2rem] bg-orange-500 p-6 text-left text-white shadow-xl"
+                    data-reveal>
+              <div class="flex justify-between">
+                <span class="text-5xl">🗣️</span>
+                <span class="arrow-icon text-2xl">⌄</span>
+              </div>
+
+              <h3 class="mt-5 text-2xl font-black">
+                Críticas
+              </h3>
+
+              <div class="reveal-extra text-sm font-semibold text-orange-50">
+                Algunas personas cuestionaban si Pablo realmente tenía autoridad como apóstol.
+              </div>
+            </button>
+
+            <button class="interactive-card rounded-[2rem] bg-emerald-500 p-6 text-left text-white shadow-xl"
+                    data-reveal>
+              <div class="flex justify-between">
+                <span class="text-5xl">🤝</span>
+                <span class="arrow-icon text-2xl">⌄</span>
+              </div>
+
+              <h3 class="mt-5 text-2xl font-black">
+                Reconciliación
+              </h3>
+
+              <div class="reveal-extra text-sm font-semibold text-emerald-50">
+                II Corintios muestra que la relación comienza a repararse y vuelve a existir esperanza.
+              </div>
+            </button>
+
+          </div>
+
+          <button class="open-detail interactive-card glass mt-5 w-full rounded-[2rem] p-5 text-left"
+                  data-title="La carta de las lágrimas"
+                  data-icon="💌"
+                  data-text="Antes de II Corintios, Pablo había escrito una carta muy dolorosa para corregir problemas graves. Más tarde recibió noticias positivas sobre la reacción de la comunidad y escribió II Corintios en un contexto de reconciliación.">
+
+            <div class="flex items-center gap-4">
+              <div class="grid h-16 w-16 place-items-center rounded-2xl bg-pink-100 text-4xl">
+                💌
+              </div>
+
+              <div class="flex-1">
+                <p class="text-xs font-black uppercase tracking-wider text-pink-600">
+                  Historia anterior
+                </p>
+
+                <h3 class="text-xl font-black text-slate-900">
+                  La “carta de las lágrimas”
+                </h3>
+              </div>
+
+              <span class="text-xl">→</span>
+            </div>
+          </button>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         06 POR QUÉ ESCRIBIÓ
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50" data-title="¿Por qué escribió Pablo?">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#eff6ff"/>
+
+          <circle cx="1340" cy="190" r="180" fill="#bae6fd" opacity=".45"/>
+          <circle cx="220" cy="680" r="270" fill="#c7d2fe" opacity=".4"/>
+
+          <g opacity=".12" fill="#1d4ed8">
+            <path d="M760 150 L850 150 L850 640 L760 640Z"/>
+            <path d="M620 570 L995 570 L995 660 L620 660Z"/>
+          </g>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[5%] top-[18%] text-[80px] opacity-20">
+          🧭
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[7%] top-[17%] text-[80px] opacity-20">
+          ✍️
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-cyan-700">
+            Propósito
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            ¿Por qué escribió Pablo?
+          </h2>
+
+          <div class="mt-6 grid gap-4 md:grid-cols-3">
+
+            <button class="open-detail interactive-card glass rounded-[2rem] p-6 text-left"
+                    data-title="Explicar"
+                    data-icon="💬"
+                    data-text="Pablo deseaba explicar sus decisiones y aclarar malentendidos acerca de su conducta y su ministerio.">
+
+              <div class="grid h-16 w-16 place-items-center rounded-2xl bg-cyan-100 text-4xl">
+                💬
+              </div>
+
+              <p class="mt-4 text-xs font-black uppercase tracking-wider text-cyan-600">
+                Objetivo 1
+              </p>
+
+              <h3 class="text-3xl font-black text-slate-900">
+                Explicar
+              </h3>
+            </button>
+
+            <button class="open-detail interactive-card glass rounded-[2rem] p-6 text-left"
+                    data-title="Corregir"
+                    data-icon="🧭"
+                    data-text="La carta busca orientar comportamientos y actitudes que estaban causando problemas dentro de la comunidad.">
+
+              <div class="grid h-16 w-16 place-items-center rounded-2xl bg-blue-100 text-4xl">
+                🧭
+              </div>
+
+              <p class="mt-4 text-xs font-black uppercase tracking-wider text-blue-600">
+                Objetivo 2
+              </p>
+
+              <h3 class="text-3xl font-black text-slate-900">
+                Corregir
+              </h3>
+            </button>
+
+            <button class="open-detail interactive-card rounded-[2rem] bg-violet-600 p-6 text-left text-white shadow-xl"
+                    data-title="Fortalecer"
+                    data-icon="💪"
+                    data-text="Pablo quiere fortalecer la fe de los creyentes y recordarles que la esperanza cristiana continúa incluso en medio de las dificultades.">
+
+              <div class="grid h-16 w-16 place-items-center rounded-2xl bg-white/20 text-4xl">
+                💪
+              </div>
+
+              <p class="mt-4 text-xs font-black uppercase tracking-wider text-violet-200">
+                Objetivo 3
+              </p>
+
+              <h3 class="text-3xl font-black">
+                Fortalecer
+              </h3>
+            </button>
+
+          </div>
+
+          <div class="mt-5 flex flex-col items-center gap-3 rounded-3xl bg-gradient-to-r from-cyan-600 to-blue-600 p-5 text-center text-white shadow-xl sm:flex-row sm:text-left">
+
+            <span class="text-5xl">📍</span>
+
+            <div>
+              <p class="text-xs font-black uppercase tracking-wider text-cyan-100">
+                Desde
+              </p>
+
+              <p class="text-2xl font-black">
+                Macedonia
+              </p>
+            </div>
+
+            <div class="hidden h-12 w-px bg-white/30 sm:block"></div>
+
+            <p class="max-w-xl text-sm font-semibold text-cyan-50">
+              Pablo escribe para aclarar sus acciones, corregir problemas y recordar a la comunidad su esperanza en Cristo.
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         07 CONSUELO
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50" data-title="Dios nos consuela">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="light7">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity=".95"/>
+              <stop offset="100%" stop-color="#d1fae5" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+
+          <rect width="1600" height="900" fill="#ecfdf5"/>
+          <circle cx="810" cy="180" r="430" fill="url(#light7)"/>
+
+          <path d="M0 720 Q300 620 600 720 T1200 690 T1600 700 L1600 900 L0 900Z"
+                fill="#86efac" opacity=".25"/>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[7%] bottom-[13%] text-[100px] opacity-15">
+          🫂
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[7%] top-[15%] text-[90px] opacity-18">
+          🕊️
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-emerald-700">
+            2 Corintios 1:3–4
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            Dios nos consuela
+          </h2>
+
+          <div class="mt-6 grid items-center gap-5 md:grid-cols-[.8fr_1.2fr]">
+
+            <button class="open-detail interactive-card glass mx-auto grid aspect-square w-[260px] place-items-center rounded-[3rem]"
+                    data-title="El consuelo"
+                    data-icon="🫂"
+                    data-text="Pablo explica que el consuelo recibido de Dios no debe quedarse solamente en nosotros. También podemos convertirnos en apoyo para otras personas que atraviesan dificultades.">
+
+              <div class="text-center">
+                <div class="float text-[100px]">
+                  🫂
+                </div>
+
+                <p class="mt-3 text-xl font-black text-emerald-700">
+                  Consuelo compartido
+                </p>
+
+                <p class="mt-1 text-xs font-black uppercase text-slate-400">
+                  Toca para descubrir
+                </p>
+              </div>
+            </button>
+
+            <div>
+
+              <div class="rounded-[2rem] bg-emerald-600 p-6 text-white shadow-xl">
+                <p class="text-2xl font-black leading-snug md:text-3xl">
+                  “Padre de las misericordias y Dios de todo consuelo”
+                </p>
+              </div>
+
+              <div class="mt-4 grid gap-3 sm:grid-cols-2">
+
+                <button class="interactive-card glass rounded-2xl p-5 text-left"
+                        data-reveal>
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-4xl">⬇️</span>
+                    <span class="arrow-icon">⌄</span>
+                  </div>
+
+                  <h3 class="mt-3 text-xl font-black text-slate-900">
+                    Recibimos
+                  </h3>
+
+                  <div class="reveal-extra text-sm font-semibold text-slate-600">
+                    Dios acompaña y fortalece en medio del sufrimiento.
+                  </div>
+                </button>
+
+                <button class="interactive-card glass rounded-2xl p-5 text-left"
+                        data-reveal>
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-4xl">➡️</span>
+                    <span class="arrow-icon">⌄</span>
+                  </div>
+
+                  <h3 class="mt-3 text-xl font-black text-slate-900">
+                    Compartimos
+                  </h3>
+
+                  <div class="reveal-extra text-sm font-semibold text-slate-600">
+                    El apoyo que recibimos nos prepara para acompañar a otros.
+                  </div>
+                </button>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         08 DIFICULTADES
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-amber-50 via-orange-50 to-lime-50" data-title="Las dificultades enseñan">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#fffbeb"/>
+
+          <circle cx="1260" cy="150" r="95" fill="#fde68a"/>
+
+          <path d="M0 690 L340 330 L650 660 L920 290 L1250 670 L1600 390 L1600 900 L0 900Z"
+                fill="#d6b37d" opacity=".45"/>
+
+          <path d="M0 760 L360 500 L650 750 L980 450 L1290 740 L1600 590 L1600 900 L0 900Z"
+                fill="#a8794e" opacity=".35"/>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[5%] top-[16%] text-[80px] opacity-18">
+          ⛰️
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[6%] bottom-[15%] text-[90px] opacity-18">
+          🥾
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-amber-700">
+            Aprender en las pruebas
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            Las dificultades también enseñan
+          </h2>
+
+          <div class="mt-6 grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
+
+            <button class="open-detail interactive-card relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-amber-500 to-orange-600 p-6 text-left text-white shadow-xl"
+                    data-title="Pablo y las dificultades"
+                    data-icon="⛰️"
+                    data-text="Pablo enfrentó naufragios, cárceles y golpes. Sin embargo, estas experiencias no lo hicieron abandonar su misión. Para él, las pruebas podían fortalecer el carácter y profundizar la fe.">
+
+              <div class="absolute -right-10 -bottom-7 text-[180px] opacity-15">
+                ⛰️
+              </div>
+
+              <p class="relative text-xs font-black uppercase tracking-wider text-amber-100">
+                Idea central
+              </p>
+
+              <p class="relative mt-3 text-3xl font-black leading-tight md:text-4xl">
+                Una prueba puede fortalecer el carácter.
+              </p>
+
+              <div class="relative mt-5 flex flex-wrap gap-2">
+                <span class="rounded-full bg-white/20 px-4 py-2 text-sm font-bold">
+                  🌊 Naufragios
+                </span>
+                <span class="rounded-full bg-white/20 px-4 py-2 text-sm font-bold">
+                  ⛓️ Cárceles
+                </span>
+                <span class="rounded-full bg-white/20 px-4 py-2 text-sm font-bold">
+                  ⚠️ Golpes
+                </span>
+              </div>
+            </button>
+
+            <div class="space-y-3">
+
+              <button class="interactive-card glass w-full rounded-2xl p-4 text-left"
+                      data-reveal>
+                <div class="flex items-center gap-3">
+                  <span class="text-4xl">1️⃣</span>
+                  <div class="flex-1">
+                    <h3 class="font-black text-slate-900">
+                      Aparece un reto
+                    </h3>
+                  </div>
+                  <span class="arrow-icon">⌄</span>
+                </div>
+
+                <div class="reveal-extra text-sm font-semibold text-slate-600">
+                  No todo ocurre como esperamos y aparecen dificultades.
+                </div>
+              </button>
+
+              <button class="interactive-card glass w-full rounded-2xl p-4 text-left"
+                      data-reveal>
+                <div class="flex items-center gap-3">
+                  <span class="text-4xl">2️⃣</span>
+                  <div class="flex-1">
+                    <h3 class="font-black text-slate-900">
+                      Aprendemos
+                    </h3>
+                  </div>
+                  <span class="arrow-icon">⌄</span>
+                </div>
+
+                <div class="reveal-extra text-sm font-semibold text-slate-600">
+                  Las pruebas pueden mostrarnos capacidades que no sabíamos que teníamos.
+                </div>
+              </button>
+
+              <button class="interactive-card glass w-full rounded-2xl p-4 text-left"
+                      data-reveal>
+                <div class="flex items-center gap-3">
+                  <span class="text-4xl">3️⃣</span>
+                  <div class="flex-1">
+                    <h3 class="font-black text-slate-900">
+                      Seguimos
+                    </h3>
+                  </div>
+                  <span class="arrow-icon">⌄</span>
+                </div>
+
+                <div class="reveal-extra text-sm font-semibold text-slate-600">
+                  La dificultad no tiene que convertirse en el final de la historia.
+                </div>
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         09 PERDONAR
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-rose-50 via-pink-50 to-violet-50" data-title="Perdonar y reconciliar">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#fff1f2"/>
+
+          <circle cx="1280" cy="220" r="260" fill="#fbcfe8" opacity=".45"/>
+          <circle cx="210" cy="720" r="270" fill="#ddd6fe" opacity=".36"/>
+
+          <path d="M620 630 Q800 480 980 630"
+                fill="none"
+                stroke="#f472b6"
+                stroke-width="35"
+                stroke-linecap="round"
+                opacity=".15"/>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[5%] top-[20%] text-[90px] opacity-17">
+          🕊️
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[5%] bottom-[13%] text-[90px] opacity-17">
+          🤝
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-pink-700">
+            2 Corintios 2 y 7
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            Perdonar y reconciliar
+          </h2>
+
+          <div class="mt-6 grid gap-4 lg:grid-cols-2">
+
+            <div class="grid gap-3 sm:grid-cols-2">
+
+              <button class="open-detail interactive-card glass rounded-[2rem] p-5 text-left"
+                      data-title="Reconocer el error"
+                      data-icon="🪞"
+                      data-text="La reconciliación comienza cuando se reconoce que algo salió mal. Admitir un error permite comenzar el proceso de reparación.">
+
+                <span class="text-5xl">🪞</span>
+
+                <h3 class="mt-3 text-xl font-black text-rose-800">
+                  Reconocer el error
+                </h3>
+              </button>
+
+              <button class="open-detail interactive-card glass rounded-[2rem] p-5 text-left"
+                      data-title="Buscar la paz"
+                      data-icon="🕊️"
+                      data-text="Para Pablo, el objetivo no es destruir a quien se equivocó, sino trabajar para recuperar la relación y construir nuevamente la paz.">
+
+                <span class="text-5xl">🕊️</span>
+
+                <h3 class="mt-3 text-xl font-black text-violet-800">
+                  Buscar la paz
+                </h3>
+              </button>
+
+              <div class="sm:col-span-2 rounded-3xl bg-slate-900 p-5 text-white shadow-xl">
+                <p class="text-lg font-black">
+                  Perdonar no significa decir que el error estuvo bien.
+                </p>
+                <p class="mt-2 text-sm font-semibold text-slate-300">
+                  Significa buscar una forma de no permanecer atrapados en el conflicto.
+                </p>
+              </div>
+
+            </div>
+
+            <button class="open-detail interactive-card relative flex min-h-[300px] items-center justify-center overflow-hidden rounded-[2rem] bg-gradient-to-br from-pink-500 to-violet-600 p-6 text-center text-white shadow-xl"
+                    data-title="Restaurar"
+                    data-icon="🤝"
+                    data-text="Pablo pide que la disciplina no se convierta en destrucción. Cuando una persona reconoce su error, la comunidad también debe abrir espacio para restaurarla y recibirla nuevamente.">
+
+              <div class="absolute -right-10 -top-10 text-[170px] opacity-10">
+                ❤️
+              </div>
+
+              <div class="relative">
+                <div class="float text-[100px]">
+                  🤝
+                </div>
+
+                <h3 class="mt-3 text-3xl font-black">
+                  Restaurar
+                </h3>
+
+                <p class="mx-auto mt-3 max-w-md font-semibold text-pink-50">
+                  Corregir debe ayudar a sanar, no a destruir.
+                </p>
+              </div>
+            </button>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         10 NUEVA ALIANZA
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-yellow-50 via-emerald-50 to-cyan-50" data-title="Nueva alianza">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#fefce8"/>
+
+          <g opacity=".15" fill="#78716c">
+            <rect x="140" y="180" width="260" height="390" rx="20"/>
+            <rect x="1200" y="170" width="260" height="400" rx="190"/>
+          </g>
+
+          <circle cx="1300" cy="340" r="170" fill="#6ee7b7" opacity=".22"/>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[6%] bottom-[14%] text-[100px] opacity-18">
+          🪨
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[7%] bottom-[14%] text-[100px] opacity-18">
+          ❤️
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-teal-700">
+            2 Corintios 3
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            Una nueva alianza
+          </h2>
+
+          <div class="mt-6 grid items-stretch gap-4 md:grid-cols-[1fr_auto_1fr]">
+
+            <button class="open-detail interactive-card glass rounded-[2rem] p-6 text-center"
+                    data-title="Tablas de piedra"
+                    data-icon="🪨"
+                    data-text="La imagen de las tablas de piedra representa la ley escrita externamente. Pablo contrasta esa imagen con la transformación interior realizada por el Espíritu.">
+
+              <div class="text-7xl">
+                🪨
+              </div>
+
+              <p class="mt-4 text-xs font-black uppercase tracking-wider text-slate-400">
+                Antes
+              </p>
+
+              <h3 class="text-3xl font-black text-slate-900">
+                Piedra
+              </h3>
+            </button>
+
+            <div class="flex items-center justify-center">
+              <div class="pulse grid h-16 w-16 place-items-center rounded-full bg-teal-600 text-3xl font-black text-white shadow-lg">
+                →
+              </div>
+            </div>
+
+            <button class="open-detail interactive-card rounded-[2rem] bg-gradient-to-br from-teal-500 to-emerald-600 p-6 text-center text-white shadow-xl"
+                    data-title="Transformación interior"
+                    data-icon="❤️"
+                    data-text="La nueva alianza se describe como una transformación que alcanza el corazón de la persona. No se trata solamente de cumplir normas externas, sino de permitir que la fe transforme la vida desde adentro.">
+
+              <div class="text-7xl">
+                ❤️
+              </div>
+
+              <p class="mt-4 text-xs font-black uppercase tracking-wider text-emerald-100">
+                Ahora
+              </p>
+
+              <h3 class="text-3xl font-black">
+                Corazón
+              </h3>
+            </button>
+
+          </div>
+
+          <div class="mx-auto mt-5 max-w-4xl rounded-[2rem] bg-slate-900 p-5 text-center text-white shadow-xl">
+            <p class="text-xs font-black uppercase tracking-[.18em] text-yellow-300">
+              Frase clave
+            </p>
+
+            <p class="mt-2 text-2xl font-black md:text-3xl">
+              “La letra mata, pero el Espíritu vivifica.”
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         11 TESORO EN VASOS DE BARRO
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50" data-title="Tesoro en vasos de barro">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#fffbeb"/>
+
+          <circle cx="800" cy="405" r="270" fill="#fde68a" opacity=".23"/>
+
+          <g opacity=".16" fill="#92400e">
+            <ellipse cx="215" cy="650" rx="90" ry="35"/>
+            <path d="M155 645 Q150 430 215 395 Q280 430 275 645Z"/>
+
+            <ellipse cx="1360" cy="640" rx="110" ry="38"/>
+            <path d="M1285 635 Q1275 400 1360 350 Q1445 400 1435 635Z"/>
+          </g>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[7%] top-[14%] text-[100px] opacity-20">
+          🏺
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[8%] top-[14%] text-[90px] opacity-22">
+          ✨
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-amber-700">
+            2 Corintios 4:7
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            Un tesoro en vasos de barro
+          </h2>
+
+          <div class="mt-5 grid items-center gap-5 md:grid-cols-[.8fr_1.2fr]">
+
+            <button class="open-detail interactive-card mx-auto text-center"
+                    data-title="Vasos de barro"
+                    data-icon="🏺"
+                    data-text="En tiempos bíblicos las vasijas de barro eran objetos comunes y frágiles. Pablo utiliza esta imagen para explicar que personas limitadas pueden llevar dentro un mensaje extraordinariamente valioso.">
+
+              <div class="relative">
+                <div class="float text-[180px] leading-none md:text-[230px]">
+                  🏺
+                </div>
+
+                <div class="glow absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 text-5xl">
+                  ✨
+                </div>
+              </div>
+
+              <p class="mt-2 text-xs font-black uppercase tracking-wider text-amber-700">
+                Toca la vasija
+              </p>
+            </button>
+
+            <div>
+
+              <div class="grid gap-3 sm:grid-cols-2">
+
+                <button class="interactive-card glass rounded-3xl p-5 text-left"
+                        data-reveal>
+
+                  <div class="flex justify-between">
+                    <span class="text-4xl">🏺</span>
+                    <span class="arrow-icon">⌄</span>
+                  </div>
+
+                  <h3 class="mt-3 text-xl font-black text-slate-900">
+                    Frágiles por fuera
+                  </h3>
+
+                  <div class="reveal-extra text-sm font-semibold text-slate-600">
+                    Las personas tienen límites, dificultades y debilidades.
+                  </div>
+                </button>
+
+                <button class="interactive-card rounded-3xl bg-amber-500 p-5 text-left text-white shadow-xl"
+                        data-reveal>
+
+                  <div class="flex justify-between">
+                    <span class="text-4xl">✨</span>
+                    <span class="arrow-icon">⌄</span>
+                  </div>
+
+                  <h3 class="mt-3 text-xl font-black">
+                    Un gran tesoro
+                  </h3>
+
+                  <div class="reveal-extra text-sm font-semibold text-amber-50">
+                    El mensaje que llevan es mucho más grande que sus propias capacidades.
+                  </div>
+                </button>
+
+              </div>
+
+              <div class="mt-4 rounded-3xl bg-slate-900 p-5 text-white">
+                <p class="font-black">
+                  El poder no viene de la perfección humana, sino de Dios.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         12 NO RENDIRSE
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50" data-title="No rendirse">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="storm12" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#475569"/>
+              <stop offset="55%" stop-color="#93c5fd"/>
+              <stop offset="100%" stop-color="#cffafe"/>
+            </linearGradient>
+          </defs>
+
+          <rect width="1600" height="900" fill="url(#storm12)" opacity=".27"/>
+
+          <path d="M0 610 Q180 560 360 610 T720 610 T1080 610 T1440 610 T1800 610"
+                fill="none"
+                stroke="#0ea5e9"
+                stroke-width="50"
+                opacity=".2"/>
+
+          <g opacity=".2">
+            <path d="M1230 570 L1345 570 L1310 525 L1260 525Z" fill="#854d0e"/>
+            <path d="M1290 530 L1290 370" stroke="#334155" stroke-width="10"/>
+            <path d="M1290 390 L1420 490 L1290 490Z" fill="#fff"/>
+          </g>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[6%] top-[16%] text-[90px] opacity-18">
+          ⚓
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[6%] bottom-[14%] text-[95px] opacity-18">
+          🌊
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-indigo-700">
+            2 Corintios 4:8–18
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            No rendirse
+          </h2>
+
+          <button class="open-detail interactive-card mt-6 w-full overflow-hidden rounded-[2.4rem] bg-gradient-to-br from-indigo-600 to-blue-700 p-6 text-left text-white shadow-2xl md:p-8"
+                  data-title="Perseverancia"
+                  data-icon="⚓"
+                  data-text="Pablo reconoce que existen momentos de presión, dolor y caída. Sin embargo, distingue entre caer y quedar destruido. La esperanza permite levantarse y continuar.">
+
+            <div class="grid items-center gap-5 md:grid-cols-[1.2fr_.8fr]">
+
+              <div>
+                <p class="text-xs font-black uppercase tracking-[.22em] text-blue-200">
+                  Perseverar
+                </p>
+
+                <p class="mt-3 text-3xl font-black leading-tight md:text-4xl">
+                  “Atribulados, pero no angustiados; derribados, pero no destruidos.”
+                </p>
+              </div>
+
+              <div class="text-center">
+                <div class="float text-[100px]">
+                  ⚓
+                </div>
+
+                <p class="mt-2 text-xl font-black">
+                  Una fe que sostiene
+                </p>
+              </div>
+
+            </div>
+          </button>
+
+          <div class="mt-4 grid gap-3 sm:grid-cols-3">
+
+            <button class="open-detail interactive-card glass rounded-2xl p-4 text-center"
+                    data-title="Mirar más allá"
+                    data-icon="👀"
+                    data-text="Pablo invita a no mirar únicamente el problema presente, sino también aquello que puede dar sentido y esperanza.">
+
+              <span class="text-4xl">👀</span>
+              <p class="mt-2 font-black text-slate-900">Mirar más allá</p>
+            </button>
+
+            <button class="open-detail interactive-card glass rounded-2xl p-4 text-center"
+                    data-title="Dar sentido"
+                    data-icon="🧠"
+                    data-text="Una dificultad puede ser dolorosa y al mismo tiempo convertirse en una experiencia de aprendizaje y crecimiento.">
+
+              <span class="text-4xl">🧠</span>
+              <p class="mt-2 font-black text-slate-900">Dar sentido</p>
+            </button>
+
+            <button class="open-detail interactive-card glass rounded-2xl p-4 text-center"
+                    data-title="Seguir adelante"
+                    data-icon="🚶"
+                    data-text="Perseverar significa continuar caminando aunque el proceso sea difícil y no exista una solución inmediata.">
+
+              <span class="text-4xl">🚶</span>
+              <p class="mt-2 font-black text-slate-900">Seguir</p>
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         13 EMBAJADORES
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-sky-50 via-cyan-50 to-violet-50" data-title="Somos embajadores">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#f0f9ff"/>
+
+          <path d="M0 730 Q380 590 780 735 T1600 690 L1600 900 L0 900Z"
+                fill="#bae6fd" opacity=".38"/>
+
+          <g opacity=".14" fill="#0369a1">
+            <rect x="150" y="270" width="280" height="350"/>
+            <polygon points="120,280 460,280 290,170"/>
+
+            <rect x="1190" y="290" width="230" height="330"/>
+            <polygon points="1160,300 1450,300 1305,205"/>
+          </g>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[6%] bottom-[13%] text-[95px] opacity-17">
+          📨
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[7%] top-[16%] text-[85px] opacity-18">
+          👑
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-sky-700">
+            2 Corintios 5:20
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            Somos embajadores
+          </h2>
+
+          <div class="mt-6 grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
+
+            <button class="open-detail interactive-card flex min-h-[300px] items-center justify-center rounded-[2rem] bg-gradient-to-br from-sky-500 to-violet-600 p-6 text-center text-white shadow-xl"
+                    data-title="Embajador"
+                    data-icon="📨"
+                    data-text="En el mundo romano, un embajador representaba la autoridad de quien lo enviaba. Pablo usa esta imagen para explicar que los creyentes representan a Cristo mediante sus palabras y su forma de vivir.">
+
+              <div>
+                <div class="float text-[110px]">
+                  📨
+                </div>
+
+                <p class="mt-3 text-2xl font-black">
+                  Representar a Cristo
+                </p>
+
+                <p class="mt-2 text-sm font-bold text-sky-100">
+                  Toca para descubrir
+                </p>
+              </div>
+            </button>
+
+            <div class="glass rounded-[2rem] p-5">
+
+              <p class="font-bold leading-relaxed text-slate-700">
+                Un embajador representa a quien lo envía. Pablo aplica esta imagen a la vida cristiana.
+              </p>
+
+              <div class="mt-4 grid gap-3 sm:grid-cols-2">
+
+                <button class="interactive-card rounded-2xl bg-sky-100 p-5 text-left"
+                        data-reveal>
+                  <div class="flex justify-between">
+                    <span class="text-4xl">🗣️</span>
+                    <span class="arrow-icon">⌄</span>
+                  </div>
+                  <h3 class="mt-3 text-xl font-black text-sky-900">
+                    Con palabras
+                  </h3>
+                  <div class="reveal-extra text-sm font-semibold text-sky-800">
+                    Hablar con respeto, verdad y esperanza.
+                  </div>
+                </button>
+
+                <button class="interactive-card rounded-2xl bg-violet-100 p-5 text-left"
+                        data-reveal>
+                  <div class="flex justify-between">
+                    <span class="text-4xl">🙌</span>
+                    <span class="arrow-icon">⌄</span>
+                  </div>
+                  <h3 class="mt-3 text-xl font-black text-violet-900">
+                    Con acciones
+                  </h3>
+                  <div class="reveal-extra text-sm font-semibold text-violet-800">
+                    Nuestra forma de comportarnos también comunica nuestros valores.
+                  </div>
+                </button>
+
+              </div>
+
+              <div class="mt-4 rounded-2xl bg-slate-900 p-5 text-white">
+                <p class="font-black">
+                  No se representa una idea solo hablando: también viviendo.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         14 RECONCILIACIÓN
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-emerald-50 via-green-50 to-yellow-50" data-title="La reconciliación">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#f0fdf4"/>
+
+          <circle cx="800" cy="420" r="310" fill="#bbf7d0" opacity=".3"/>
+
+          <g opacity=".13" stroke="#15803d" stroke-width="32" fill="none" stroke-linecap="round">
+            <path d="M260 620 Q520 250 790 520"/>
+            <path d="M790 520 Q1060 250 1340 620"/>
+          </g>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[5%] top-[15%] text-[85px] opacity-18">
+          🌱
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[6%] top-[15%] text-[85px] opacity-18">
+          🤝
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-green-700">
+            2 Corintios 5:17–21
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            La reconciliación
+          </h2>
+
+          <div class="mt-6 grid gap-4 md:grid-cols-3">
+
+            <button class="open-detail interactive-card glass rounded-[2rem] p-5 text-center"
+                    data-title="Nueva creación"
+                    data-icon="🌱"
+                    data-text="La reconciliación abre la posibilidad de comenzar otra vez. Pablo presenta la vida en Cristo como una nueva creación.">
+
+              <div class="mx-auto grid h-20 w-20 place-items-center rounded-full bg-green-100 text-5xl">
+                🌱
+              </div>
+
+              <h3 class="mt-4 text-2xl font-black text-slate-900">
+                Nueva creación
+              </h3>
+            </button>
+
+            <button class="open-detail interactive-card glass rounded-[2rem] p-5 text-center"
+                    data-title="Volver a unir"
+                    data-icon="🤝"
+                    data-text="Reconciliar significa trabajar para restaurar una relación que se ha roto. Exige diálogo, reconocimiento del daño y voluntad de construir la paz.">
+
+              <div class="mx-auto grid h-20 w-20 place-items-center rounded-full bg-yellow-100 text-5xl">
+                🤝
+              </div>
+
+              <h3 class="mt-4 text-2xl font-black text-slate-900">
+                Volver a unir
+              </h3>
+            </button>
+
+            <button class="open-detail interactive-card rounded-[2rem] bg-green-600 p-5 text-center text-white shadow-xl"
+                    data-title="Misión activa"
+                    data-icon="🌍"
+                    data-text="Pablo afirma que quien ha recibido reconciliación también puede ayudar a sanar relaciones y promover la paz con los demás.">
+
+              <div class="mx-auto grid h-20 w-20 place-items-center rounded-full bg-white/20 text-5xl">
+                🌍
+              </div>
+
+              <h3 class="mt-4 text-2xl font-black">
+                Misión activa
+              </h3>
+            </button>
+
+          </div>
+
+          <div class="mx-auto mt-5 max-w-4xl rounded-3xl bg-slate-900 p-5 text-center text-white shadow-xl">
+            <p class="text-xs font-black uppercase tracking-wider text-green-300">
+              Idea clave
+            </p>
+
+            <p class="mt-1 text-xl font-black">
+              Reconciliar significa actuar para sanar relaciones.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         15 GENEROSIDAD
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50" data-title="Generosidad">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#fffbeb"/>
+
+          <circle cx="1320" cy="170" r="230" fill="#fde68a" opacity=".45"/>
+
+          <path d="M0 750 Q320 640 700 730 T1250 700 T1600 720 L1600 900 L0 900Z"
+                fill="#fdba74" opacity=".24"/>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[6%] top-[16%] text-[90px] opacity-18">
+          🎁
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[8%] bottom-[14%] text-[95px] opacity-18">
+          🤲
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-orange-700">
+            2 Corintios 8–9
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            La generosidad
+          </h2>
+
+          <div class="mt-6 grid items-center gap-5 md:grid-cols-[.8fr_1.2fr]">
+
+            <button class="open-detail interactive-card glass mx-auto grid aspect-square w-[250px] place-items-center rounded-[3rem]"
+                    data-title="La colecta"
+                    data-icon="🎁"
+                    data-text="Pablo organizó una colecta entre varias iglesias para ayudar a los cristianos pobres de Jerusalén. La ayuda atravesaba ciudades y comunidades diferentes.">
+
+              <div class="text-center">
+                <div class="float text-[100px]">
+                  🎁
+                </div>
+
+                <p class="mt-3 text-xl font-black text-orange-700">
+                  Compartir
+                </p>
+              </div>
+            </button>
+
+            <div>
+
+              <div class="rounded-[2rem] bg-orange-500 p-6 text-white shadow-xl">
+                <p class="text-xs font-black uppercase tracking-wider text-orange-100">
+                  Frase conocida
+                </p>
+
+                <p class="mt-2 text-3xl font-black">
+                  “Dios ama al dador alegre.”
+                </p>
+              </div>
+
+              <div class="mt-4 grid gap-3 sm:grid-cols-3">
+
+                <button class="open-detail interactive-card glass rounded-2xl p-4 text-center"
+                        data-title="Sin obligación"
+                        data-icon="🕊️"
+                        data-text="Pablo insiste en que la generosidad no debe nacer de la presión, sino de una decisión libre.">
+
+                  <span class="text-4xl">🕊️</span>
+                  <p class="mt-2 font-black text-slate-900">
+                    Sin obligación
+                  </p>
+                </button>
+
+                <button class="open-detail interactive-card glass rounded-2xl p-4 text-center"
+                        data-title="Con alegría"
+                        data-icon="😊"
+                        data-text="Dar con alegría significa ayudar sin resentimiento y valorar la oportunidad de compartir.">
+
+                  <span class="text-4xl">😊</span>
+                  <p class="mt-2 font-black text-slate-900">
+                    Con alegría
+                  </p>
+                </button>
+
+                <button class="open-detail interactive-card glass rounded-2xl p-4 text-center"
+                        data-title="Pensando en otros"
+                        data-icon="🤲"
+                        data-text="La generosidad dirige la atención hacia las necesidades de otras personas y comunidades.">
+
+                  <span class="text-4xl">🤲</span>
+                  <p class="mt-2 font-black text-slate-900">
+                    Pensando en otros
+                  </p>
+                </button>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         16 AYUDAR
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-emerald-50 via-sky-50 to-violet-50" data-title="Ayudar a los demás">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#ecfdf5"/>
+
+          <circle cx="820" cy="400" r="310" fill="#bfdbfe" opacity=".22"/>
+
+          <path d="M0 720 Q350 630 700 720 T1300 690 T1600 720 L1600 900 L0 900Z"
+                fill="#a7f3d0" opacity=".25"/>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[6%] top-[15%] text-[90px] opacity-18">
+          🤲
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[6%] top-[16%] text-[90px] opacity-18">
+          ❤️
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-emerald-700">
+            Fe en acción
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            Ayudar a los demás
+          </h2>
+
+          <button class="open-detail interactive-card mt-6 w-full rounded-[2rem] bg-slate-900 p-6 text-left text-white shadow-xl"
+                  data-title="Una red de ayuda"
+                  data-icon="🌍"
+                  data-text="Las iglesias de diferentes ciudades aprendieron a ayudarse unas a otras. Esto construía una comunidad unida no solamente por la cercanía física, sino por la fe y la solidaridad.">
+
+            <div class="grid items-center gap-4 sm:grid-cols-[auto_1fr]">
+
+              <div class="grid h-24 w-24 place-items-center rounded-3xl bg-white/10 text-6xl">
+                👐
+              </div>
+
+              <div>
+                <p class="text-xs font-black uppercase tracking-wider text-emerald-300">
+                  Idea clave
+                </p>
+
+                <p class="mt-1 text-3xl font-black">
+                  La fe se demuestra con hechos.
+                </p>
+              </div>
+
+            </div>
+          </button>
+
+          <div class="mt-4 grid gap-3 sm:grid-cols-3">
+
+            <button class="interactive-card glass rounded-3xl p-5 text-center"
+                    data-reveal>
+
+              <div class="flex justify-between">
+                <span class="text-5xl">👀</span>
+                <span class="arrow-icon">⌄</span>
+              </div>
+
+              <h3 class="mt-3 text-xl font-black text-slate-900">
+                Ver
+              </h3>
+
+              <div class="reveal-extra text-sm font-semibold text-slate-600">
+                Primero debemos reconocer que alguien necesita ayuda.
+              </div>
+            </button>
+
+            <button class="interactive-card glass rounded-3xl p-5 text-center"
+                    data-reveal>
+
+              <div class="flex justify-between">
+                <span class="text-5xl">❤️</span>
+                <span class="arrow-icon">⌄</span>
+              </div>
+
+              <h3 class="mt-3 text-xl font-black text-slate-900">
+                Sentir
+              </h3>
+
+              <div class="reveal-extra text-sm font-semibold text-slate-600">
+                La empatía nos permite comprender mejor la situación de otra persona.
+              </div>
+            </button>
+
+            <button class="interactive-card rounded-3xl bg-emerald-500 p-5 text-center text-white shadow-xl"
+                    data-reveal>
+
+              <div class="flex justify-between">
+                <span class="text-5xl">🏃</span>
+                <span class="arrow-icon">⌄</span>
+              </div>
+
+              <h3 class="mt-3 text-xl font-black">
+                Actuar
+              </h3>
+
+              <div class="reveal-extra text-sm font-semibold text-emerald-50">
+                La ayuda se vuelve real cuando la intención se convierte en una acción.
+              </div>
+            </button>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         17 CRÍTICAS A PABLO
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-red-50 via-orange-50 to-violet-50" data-title="Pablo fue criticado">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#fef2f2"/>
+
+          <circle cx="250" cy="250" r="230" fill="#fecaca" opacity=".35"/>
+          <circle cx="1350" cy="650" r="300" fill="#ddd6fe" opacity=".36"/>
+
+          <g opacity=".11" fill="#991b1b">
+            <path d="M330 400 L650 400 L610 555 L500 510 L390 555Z"/>
+            <path d="M1030 380 L1350 380 L1310 535 L1200 490 L1090 535Z"/>
+          </g>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[5%] top-[15%] text-[90px] opacity-18">
+          🗣️
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[6%] top-[16%] text-[90px] opacity-18">
+          🛡️
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-red-700">
+            2 Corintios 10–12
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            Pablo también fue criticado
+          </h2>
+
+          <div class="mt-6 grid gap-4 md:grid-cols-2">
+
+            <button class="open-detail interactive-card rounded-[2rem] bg-gradient-to-br from-red-500 to-orange-500 p-6 text-left text-white shadow-xl"
+                    data-title="Predicadores rivales"
+                    data-icon="🗣️"
+                    data-text="Llegaron a Corinto personas que Pablo llama irónicamente “superapóstoles”. Criticaban su autoridad y presentaban una imagen de superioridad.">
+
+              <span class="text-6xl">
+                🗣️
+              </span>
+
+              <p class="mt-4 text-xs font-black uppercase tracking-wider text-red-100">
+                El problema
+              </p>
+
+              <h3 class="mt-1 text-3xl font-black">
+                Predicadores rivales
+              </h3>
+            </button>
+
+            <button class="open-detail interactive-card glass rounded-[2rem] p-6 text-left"
+                    data-title="La defensa de Pablo"
+                    data-icon="🛡️"
+                    data-text="Pablo no intenta demostrar su autoridad presumiendo éxitos. Presenta sus sufrimientos y dificultades como prueba de que su ministerio depende de Dios y no de una apariencia de grandeza.">
+
+              <span class="text-6xl">
+                🛡️
+              </span>
+
+              <p class="mt-4 text-xs font-black uppercase tracking-wider text-violet-600">
+                La respuesta
+              </p>
+
+              <h3 class="mt-1 text-3xl font-black text-slate-900">
+                Defensa sincera
+              </h3>
+            </button>
+
+          </div>
+
+          <button class="interactive-card mx-auto mt-5 block w-full max-w-4xl rounded-3xl bg-slate-900 p-5 text-left text-white"
+                  data-reveal>
+
+            <div class="flex items-center justify-between">
+              <span class="font-black">
+                🔎 ¿Qué resulta sorprendente?
+              </span>
+              <span class="arrow-icon">⌄</span>
+            </div>
+
+            <div class="reveal-extra text-sm font-semibold text-slate-300">
+              Pablo no esconde sus debilidades. Las utiliza para mostrar que su misión no depende de parecer perfecto.
+            </div>
+          </button>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         18 VERDADERA FORTALEZA
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-violet-50 via-indigo-50 to-cyan-50" data-title="La verdadera fortaleza">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="grace18">
+              <stop offset="0%" stop-color="#fff" stop-opacity=".95"/>
+              <stop offset="100%" stop-color="#c4b5fd" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+
+          <rect width="1600" height="900" fill="#f5f3ff"/>
+          <circle cx="820" cy="300" r="450" fill="url(#grace18)"/>
+
+          <path d="M0 730 Q310 620 650 720 T1300 680 T1600 710 L1600 900 L0 900Z"
+                fill="#c4b5fd"
+                opacity=".28"/>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[6%] top-[17%] text-[90px] opacity-17">
+          🌵
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[6%] top-[17%] text-[90px] opacity-18">
+          ✨
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-violet-700">
+            2 Corintios 12:7–10
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            La verdadera fortaleza
+          </h2>
+
+          <div class="mt-6 grid gap-4 lg:grid-cols-[1.15fr_.85fr]">
+
+            <button class="open-detail interactive-card rounded-[2rem] bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 p-7 text-left text-white shadow-2xl"
+                    data-title="Mi poder se perfecciona..."
+                    data-icon="✨"
+                    data-text="La frase expresa una de las ideas centrales de II Corintios: la debilidad humana no impide que Dios actúe. Pablo aprende que la fortaleza cristiana no consiste en no tener límites, sino en confiar en la gracia de Dios.">
+
+              <p class="text-xs font-black uppercase tracking-[.2em] text-violet-200">
+                Frase clave
+              </p>
+
+              <p class="mt-4 text-3xl font-black leading-tight sm:text-4xl">
+                “Mi poder se perfecciona en la debilidad.”
+              </p>
+
+              <p class="mt-3 font-bold text-violet-200">
+                — II Corintios 12:9
+              </p>
+            </button>
+
+            <button class="open-detail interactive-card glass rounded-[2rem] p-6 text-left"
+                    data-title="El aguijón"
+                    data-icon="🌵"
+                    data-text="Pablo habla de un “aguijón en la carne” y cuenta que pidió tres veces que desapareciera. La carta no explica exactamente qué era. Lo importante en el texto es la respuesta que recibe: “Mi gracia te basta”.">
+
+              <div class="flex items-center gap-4">
+                <div class="grid h-16 w-16 place-items-center rounded-2xl bg-violet-100 text-4xl">
+                  🌵
+                </div>
+
+                <div>
+                  <p class="text-xs font-black uppercase tracking-wider text-violet-600">
+                    El “aguijón”
+                  </p>
+
+                  <h3 class="text-xl font-black text-slate-900">
+                    Un límite persistente
+                  </h3>
+                </div>
+              </div>
+
+              <p class="mt-4 text-sm font-semibold text-slate-600">
+                “Mi gracia te basta”.
+              </p>
+            </button>
+
+          </div>
+
+          <div class="mt-4 grid gap-3 sm:grid-cols-3">
+
+            <button class="interactive-card glass rounded-2xl p-4 text-center"
+                    data-reveal>
+
+              <span class="text-4xl">🧍</span>
+
+              <p class="mt-2 font-black text-slate-900">
+                Aceptar límites
+              </p>
+
+              <div class="reveal-extra text-xs font-semibold text-slate-600">
+                No somos perfectos ni tenemos control de todo.
+              </div>
+            </button>
+
+            <button class="interactive-card glass rounded-2xl p-4 text-center"
+                    data-reveal>
+
+              <span class="text-4xl">🙏</span>
+
+              <p class="mt-2 font-black text-slate-900">
+                Confiar
+              </p>
+
+              <div class="reveal-extra text-xs font-semibold text-slate-600">
+                Pablo aprende a depender de la gracia de Dios.
+              </div>
+            </button>
+
+            <button class="interactive-card glass rounded-2xl p-4 text-center"
+                    data-reveal>
+
+              <span class="text-4xl">💪</span>
+
+              <p class="mt-2 font-black text-slate-900">
+                Continuar
+              </p>
+
+              <div class="reveal-extra text-xs font-semibold text-slate-600">
+                La debilidad no detiene automáticamente la misión.
+              </div>
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         19 ENSEÑANZA ACTUAL
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-cyan-50 via-emerald-50 to-yellow-50" data-title="¿Qué nos enseña hoy?">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <rect width="1600" height="900" fill="#ecfeff"/>
+
+          <circle cx="280" cy="170" r="200" fill="#a5f3fc" opacity=".3"/>
+          <circle cx="1340" cy="680" r="270" fill="#fde68a" opacity=".25"/>
+
+          <path d="M0 755 Q340 650 690 750 T1300 710 T1600 735 L1600 900 L0 900Z"
+                fill="#86efac"
+                opacity=".22"/>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[6%] top-[15%] text-[85px] opacity-18">
+          🕊️
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[6%] top-[15%] text-[85px] opacity-18">
+          🌅
+        </div>
+      </div>
+
+      <div class="slide-content">
+        <div class="mx-auto max-w-6xl">
+
+          <span class="text-sm font-black uppercase tracking-[.18em] text-teal-700">
+            Aplicación actual
+          </span>
+
+          <h2 class="mt-2 text-4xl font-black text-slate-900 md:text-6xl">
+            ¿Qué nos enseña hoy?
+          </h2>
+
+          <div class="mt-6 grid gap-4 md:grid-cols-3">
+
+            <button class="interactive-card rounded-[2rem] bg-cyan-500 p-6 text-left text-white shadow-xl"
+                    data-reveal>
+
+              <div class="flex justify-between">
+                <span class="text-6xl">🕊️</span>
+                <span class="arrow-icon text-2xl">⌄</span>
+              </div>
+
+              <h3 class="mt-4 text-3xl font-black">
+                Perdonar
+              </h3>
+
+              <div class="reveal-extra text-sm font-semibold text-cyan-50">
+                Buscar soluciones que restauren una relación en lugar de aumentar el conflicto.
+              </div>
+            </button>
+
+            <button class="interactive-card rounded-[2rem] bg-emerald-500 p-6 text-left text-white shadow-xl"
+                    data-reveal>
+
+              <div class="flex justify-between">
+                <span class="text-6xl">🤲</span>
+                <span class="arrow-icon text-2xl">⌄</span>
+              </div>
+
+              <h3 class="mt-4 text-3xl font-black">
+                Ayudar
+              </h3>
+
+              <div class="reveal-extra text-sm font-semibold text-emerald-50">
+                Convertir la empatía en acciones concretas para apoyar a otras personas.
+              </div>
+            </button>
+
+            <button class="interactive-card rounded-[2rem] bg-amber-500 p-6 text-left text-white shadow-xl"
+                    data-reveal>
+
+              <div class="flex justify-between">
+                <span class="text-6xl">🚶</span>
+                <span class="arrow-icon text-2xl">⌄</span>
+              </div>
+
+              <h3 class="mt-4 text-3xl font-black">
+                Perseverar
+              </h3>
+
+              <div class="reveal-extra text-sm font-semibold text-amber-50">
+                Continuar con esperanza incluso cuando aparecen dificultades.
+              </div>
+            </button>
+
+          </div>
+
+          <div class="mt-5 rounded-3xl bg-slate-900 p-5 text-white shadow-xl">
+
+            <p class="text-center text-xs font-black uppercase tracking-wider text-cyan-300">
+              Mini reto
+            </p>
+
+            <p class="mt-1 text-center font-black">
+              ¿Qué frase representa mejor el mensaje?
+            </p>
+
+            <div class="mx-auto mt-4 grid max-w-4xl gap-2 sm:grid-cols-3">
+
+              <button class="quiz-option rounded-xl border-2 border-slate-600 bg-slate-800 p-3 text-sm font-bold text-white"
+                      data-answer="wrong">
+                Evitar todos los problemas
+              </button>
+
+              <button class="quiz-option rounded-xl border-2 border-slate-600 bg-slate-800 p-3 text-sm font-bold text-white"
+                      data-answer="correct">
+                Perseverar con esperanza
+              </button>
+
+              <button class="quiz-option rounded-xl border-2 border-slate-600 bg-slate-800 p-3 text-sm font-bold text-white"
+                      data-answer="wrong">
+                Pensar solo en uno mismo
+              </button>
+
+            </div>
+
+            <p id="quizFeedback" class="mt-3 min-h-[20px] text-center text-sm font-bold text-slate-300"></p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         20 MENSAJE FINAL
+    ========================================================= -->
+    <section class="slide bg-gradient-to-br from-violet-50 via-fuchsia-50 to-cyan-50" data-title="Mensaje final">
+
+      <div class="biblical-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="sunset20" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ddd6fe"/>
+              <stop offset="45%" stop-color="#fbcfe8"/>
+              <stop offset="100%" stop-color="#fde68a"/>
+            </linearGradient>
+          </defs>
+
+          <rect width="1600" height="900" fill="url(#sunset20)"/>
+
+          <circle cx="800" cy="330" r="115" fill="#fff7b1" opacity=".85"/>
+
+          <path d="M0 670 Q320 570 650 680 T1240 645 T1600 670 L1600 900 L0 900Z"
+                fill="#7c3aed"
+                opacity=".22"/>
+
+          <g class="light-ray">
+            <path d="M800 330 L400 900 L640 900Z" fill="#fff" opacity=".18"/>
+            <path d="M800 330 L1160 900 L950 900Z" fill="#fff" opacity=".18"/>
+          </g>
+        </svg>
+
+        <div class="scene-layer scene-layer-1 left-[5%] top-[14%] text-[90px] opacity-17">
+          📖
+        </div>
+
+        <div class="scene-layer scene-layer-2 right-[7%] top-[15%] text-[90px] opacity-17">
+          🕊️
+        </div>
+
+        <div class="scene-layer scene-layer-3 bottom-[12%] left-[47%] text-[80px] opacity-15">
+          ✨
+        </div>
+      </div>
+
+      <div class="slide-content flex items-center">
+
+        <div class="mx-auto w-full max-w-6xl text-center">
+
+          <span class="inline-flex rounded-full bg-slate-900 px-5 py-2 text-xs font-black uppercase tracking-[.2em] text-white">
+            Mensaje final
+          </span>
+
+          <h2 class="mt-5 text-5xl font-black leading-tight text-slate-900 sm:text-6xl md:text-7xl">
+            Fe, amor y
+            <span class="block bg-gradient-to-r from-violet-700 via-fuchsia-600 to-cyan-600 bg-clip-text text-transparent">
+              esperanza
+            </span>
+          </h2>
+
+          <div class="mx-auto mt-6 grid max-w-4xl grid-cols-3 gap-2 sm:gap-4">
+
+            <button class="open-detail interactive-card glass rounded-3xl p-4 sm:p-5"
+                    data-title="Fe"
+                    data-icon="🙏"
+                    data-text="Confiar en Dios incluso cuando no comprendemos completamente lo que estamos viviendo.">
+
+              <div class="text-4xl sm:text-5xl">
+                🙏
+              </div>
+
+              <p class="mt-2 text-sm font-black text-violet-700 sm:text-xl">
+                Fe
+              </p>
+            </button>
+
+            <button class="open-detail interactive-card glass rounded-3xl p-4 sm:p-5"
+                    data-title="Amor"
+                    data-icon="❤️"
+                    data-text="El amor se expresa perdonando, reconciliando, ayudando y actuando con generosidad.">
+
+              <div class="text-4xl sm:text-5xl">
+                ❤️
+              </div>
+
+              <p class="mt-2 text-sm font-black text-fuchsia-700 sm:text-xl">
+                Amor
+              </p>
+            </button>
+
+            <button class="open-detail interactive-card glass rounded-3xl p-4 sm:p-5"
+                    data-title="Esperanza"
+                    data-icon="🌅"
+                    data-text="La esperanza permite mirar más allá de una dificultad y creer que siempre es posible continuar y crecer.">
+
+              <div class="text-4xl sm:text-5xl">
+                🌅
+              </div>
+
+              <p class="mt-2 text-sm font-black text-cyan-700 sm:text-xl">
+                Esperanza
+              </p>
+            </button>
+
+          </div>
+
+          <button class="open-detail interactive-card mx-auto mt-6 block max-w-3xl rounded-[2rem] bg-slate-900 p-5 text-white shadow-2xl"
+                  data-title="Mensaje de II Corintios"
+                  data-icon="✨"
+                  data-text="II Corintios enseña que la fe no promete una vida sin problemas. Su mensaje es que las dificultades pueden enfrentarse con esperanza, apoyo, reconciliación, generosidad y confianza en Dios.">
+
+            <p class="text-lg font-black leading-relaxed sm:text-xl">
+              Las dificultades no tienen que ser el final. También pueden convertirse en oportunidades para crecer.
+            </p>
+
+            <p class="mt-3 text-xs font-black uppercase tracking-wider text-violet-300">
+              Toca para ver el mensaje completo
+            </p>
+          </button>
+
+          <p class="mt-5 text-sm font-black uppercase tracking-[.2em] text-slate-600">
+            II Corintios · Presentado por Andrea
+          </p>
+
+          <button id="restartPresentation"
+                  class="mt-4 inline-flex items-center gap-2 rounded-2xl bg-violet-700 px-5 py-3 font-black text-white shadow-xl transition hover:scale-105">
+            ↻ Volver al inicio
+          </button>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         TOP UI
+    ========================================================= -->
+    <div class="top-ui">
+      <div class="flex items-center justify-between gap-2">
+
+        <div class="dark-glass pointer-events-auto flex items-center gap-2 rounded-full px-3 py-2 text-white shadow-xl">
+
+          <span class="text-xs font-black">
+            <span id="currentNumber">01</span>/<span id="totalNumber">20</span>
+          </span>
+
+          <span class="mobile-hide h-4 w-px bg-white/20"></span>
+
+          <span id="slideTitle"
+                class="mobile-hide max-w-[230px] truncate text-xs font-bold text-slate-200">
+            II Corintios
+          </span>
+
+        </div>
+
+        <div class="dark-glass pointer-events-auto flex items-center gap-1 rounded-full p-1.5 text-white shadow-xl">
+
+          <button id="restartTimer"
+                  class="grid h-9 w-9 place-items-center rounded-full transition hover:bg-white/10"
+                  aria-label="Reiniciar temporizador">
+            ↻
+          </button>
+
+          <button id="playPause"
+                  class="grid h-9 w-9 place-items-center rounded-full bg-white text-xs font-black text-slate-900"
+                  aria-label="Iniciar presentación automática">
+            ▶
+          </button>
+
+          <div id="timerRing"
+               class="timer-ring grid h-9 w-9 place-items-center rounded-full p-[3px]">
+
+            <div class="grid h-full w-full place-items-center rounded-full bg-slate-900">
+              <span id="timerText" class="text-[10px] font-black">
+                20
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================
+         BOTTOM UI
+    ========================================================= -->
+    <div class="bottom-ui">
+
+      <div class="dark-glass pointer-events-auto mx-auto max-w-5xl rounded-[1.4rem] px-3 py-3 shadow-2xl">
+
+        <div class="flex items-center gap-2">
+
+          <button id="prevBtn"
+                  class="nav-button"
+                  aria-label="Diapositiva anterior">
+            ‹
+          </button>
+
+          <div class="min-w-0 flex-1">
+
+            <div class="h-1.5 overflow-hidden rounded-full bg-white/15">
+              <div id="progressFill"
+                   class="h-full rounded-full bg-white transition-all"
+                   style="width:5%">
+              </div>
+            </div>
+
+            <div id="bullets"
+                 class="mt-2 flex max-w-full items-center justify-center gap-1.5 overflow-x-auto px-1 py-1">
+            </div>
+
+          </div>
+
+          <button id="nextBtn"
+                  class="nav-button"
+                  aria-label="Siguiente diapositiva">
+            ›
+          </button>
+
+        </div>
+
+        <div class="mobile-hide mt-1 flex items-center justify-center gap-5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <span>← → Navegar</span>
+          <span>Desliza en celular</span>
+          <span>20 s por diapositiva</span>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- =========================================================
+     MODAL
+========================================================= -->
+
+<div id="detailModal"
+     class="detail-modal"
+     role="dialog"
+     aria-modal="true">
+
+  <div class="detail-box">
+
+    <div class="flex items-start justify-between gap-4">
+
+      <div class="flex items-center gap-4">
+
+        <div id="modalIcon"
+             class="grid h-16 w-16 flex-none place-items-center rounded-2xl bg-violet-100 text-4xl">
+          📖
+        </div>
+
+        <div>
+          <p class="text-xs font-black uppercase tracking-wider text-violet-600">
+            Descubre más
+          </p>
+
+          <h3 id="modalTitle"
+              class="mt-1 text-2xl font-black text-slate-900">
+          </h3>
+        </div>
+
+      </div>
+
+      <button id="closeModal"
+              class="grid h-10 w-10 flex-none place-items-center rounded-full bg-slate-100 font-black text-slate-700"
+              aria-label="Cerrar">
+        ✕
+      </button>
+
+    </div>
+
+    <p id="modalText"
+       class="mt-5 text-base font-semibold leading-relaxed text-slate-600">
+    </p>
+
+    <button id="modalContinue"
+            class="mt-6 w-full rounded-2xl bg-slate-900 px-5 py-3 font-black text-white">
+      Entendido
+    </button>
+
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const slides = [...document.querySelectorAll(".slide")];
+
+  const currentNumber = document.getElementById("currentNumber");
+  const totalNumber = document.getElementById("totalNumber");
+  const slideTitle = document.getElementById("slideTitle");
+  const progressFill = document.getElementById("progressFill");
+
+  const bulletsContainer = document.getElementById("bullets");
+
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+
+  const playPause = document.getElementById("playPause");
+  const restartTimer = document.getElementById("restartTimer");
+  const timerRing = document.getElementById("timerRing");
+  const timerText = document.getElementById("timerText");
+
+  const restartPresentation = document.getElementById("restartPresentation");
+
+  const viewport = document.getElementById("viewport");
+
+  const modal = document.getElementById("detailModal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalText = document.getElementById("modalText");
+  const modalIcon = document.getElementById("modalIcon");
+  const closeModal = document.getElementById("closeModal");
+  const modalContinue = document.getElementById("modalContinue");
+
+  let currentSlide = 0;
+
+  const secondsPerSlide = 20;
+  let timeRemaining = secondsPerSlide;
+  let playing = false;
+  let timerId = null;
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchEndX = 0;
+  let touchEndY = 0;
+
+  totalNumber.textContent = String(slides.length).padStart(2, "0");
+
+  /* =========================================================
+     BULLETS
+  ========================================================= */
+
+  function buildBullets() {
+    bulletsContainer.innerHTML = "";
+
+    slides.forEach((slide, index) => {
+      const bullet = document.createElement("button");
+
+      bullet.className = "bullet";
+      bullet.type = "button";
+      bullet.setAttribute(
+        "aria-label",
+        `Ir a la diapositiva ${index + 1}`
+      );
+
+      bullet.addEventListener("click", () => {
+        goToSlide(index);
+      });
+
+      bulletsContainer.appendChild(bullet);
+    });
+  }
+
+  /* =========================================================
+     SLIDER
+  ========================================================= */
+
+  function goToSlide(index) {
+    if (index < 0) {
+      index = slides.length - 1;
+    }
+
+    if (index >= slides.length) {
+      index = 0;
+    }
+
+    slides[currentSlide].classList.remove("active");
+
+    currentSlide = index;
+
+    slides[currentSlide].classList.add("active");
+
+    const content = slides[currentSlide].querySelector(".slide-content");
+
+    if (content) {
+      content.scrollTop = 0;
+    }
+
+    resetTimer(false);
+    updateInterface();
+  }
+
+  function nextSlide() {
+    if (currentSlide === slides.length - 1) {
+      if (playing) {
+        stopTimer();
+      }
+      return;
+    }
+
+    goToSlide(currentSlide + 1);
+  }
+
+  function previousSlide() {
+    goToSlide(currentSlide - 1);
+  }
+
+  function updateInterface() {
+    currentNumber.textContent =
+      String(currentSlide + 1).padStart(2, "0");
+
+    slideTitle.textContent =
+      slides[currentSlide].dataset.title ||
+      `Diapositiva ${currentSlide + 1}`;
+
+    progressFill.style.width =
+      `${((currentSlide + 1) / slides.length) * 100}%`;
+
+    const bullets =
+      [...bulletsContainer.querySelectorAll(".bullet")];
+
+    bullets.forEach((bullet, index) => {
+      bullet.classList.toggle(
+        "active",
+        index === currentSlide
+      );
+    });
+
+    const activeBullet = bullets[currentSlide];
+
+    if (activeBullet) {
+      activeBullet.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest"
+      });
+    }
+  }
+
+  /* =========================================================
+     TIMER
+  ========================================================= */
+
+  function updateTimer() {
+    const value =
+      Math.max(0, Math.ceil(timeRemaining));
+
+    timerText.textContent = value;
+
+    const percentage =
+      ((secondsPerSlide - timeRemaining) /
+        secondsPerSlide) * 100;
+
+    timerRing.style.setProperty(
+      "--percent",
+      `${Math.min(100, Math.max(0, percentage))}%`
+    );
+
+    playPause.textContent =
+      playing ? "❚❚" : "▶";
+  }
+
+  function startTimer() {
+    if (playing) return;
+
+    playing = true;
+
+    let last = performance.now();
+
+    timerId = window.setInterval(() => {
+      const now = performance.now();
+      const elapsed = (now - last) / 1000;
+
+      last = now;
+
+      timeRemaining -= elapsed;
+
+      if (timeRemaining <= 0) {
+        if (currentSlide < slides.length - 1) {
+          slides[currentSlide].classList.remove("active");
+
+          currentSlide++;
+
+          slides[currentSlide].classList.add("active");
+
+          timeRemaining = secondsPerSlide;
+
+          const content =
+            slides[currentSlide].querySelector(".slide-content");
+
+          if (content) {
+            content.scrollTop = 0;
+          }
+
+          updateInterface();
+        } else {
+          timeRemaining = 0;
+          stopTimer();
+        }
+      }
+
+      updateTimer();
+    }, 100);
+
+    updateTimer();
+  }
+
+  function stopTimer() {
+    playing = false;
+
+    if (timerId) {
+      clearInterval(timerId);
+      timerId = null;
+    }
+
+    updateTimer();
+  }
+
+  function resetTimer(resume = false) {
+    const wasPlaying = playing;
+
+    stopTimer();
+
+    timeRemaining = secondsPerSlide;
+
+    updateTimer();
+
+    if (resume || wasPlaying) {
+      startTimer();
+    }
+  }
+
+  playPause.addEventListener("click", () => {
+    if (playing) {
+      stopTimer();
+    } else {
+      startTimer();
+    }
+  });
+
+  restartTimer.addEventListener("click", () => {
+    const resume = playing;
+
+    stopTimer();
+
+    timeRemaining = secondsPerSlide;
+
+    updateTimer();
+
+    if (resume) {
+      startTimer();
+    }
+  });
+
+  /* =========================================================
+     CONTROLS
+  ========================================================= */
+
+  prevBtn.addEventListener("click", previousSlide);
+  nextBtn.addEventListener("click", nextSlide);
+
+  document.addEventListener("keydown", event => {
+    if (modal.classList.contains("open")) {
+      if (event.key === "Escape") {
+        hideModal();
+      }
+      return;
+    }
+
+    if (
+      event.key === "ArrowRight" ||
+      event.key === "PageDown"
+    ) {
+      event.preventDefault();
+      nextSlide();
+    }
+
+    if (
+      event.key === "ArrowLeft" ||
+      event.key === "PageUp"
+    ) {
+      event.preventDefault();
+      previousSlide();
+    }
+
+    if (event.code === "Space") {
+      event.preventDefault();
+
+      if (playing) {
+        stopTimer();
+      } else {
+        startTimer();
+      }
+    }
+
+    if (event.key === "Home") {
+      goToSlide(0);
+    }
+
+    if (event.key === "End") {
+      goToSlide(slides.length - 1);
+    }
+  });
+
+  /* =========================================================
+     SWIPE MOBILE
+  ========================================================= */
+
+  viewport.addEventListener(
+    "touchstart",
+    event => {
+      const touch = event.changedTouches[0];
+
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    },
+    { passive: true }
+  );
+
+  viewport.addEventListener(
+    "touchend",
+    event => {
+      const touch = event.changedTouches[0];
+
+      touchEndX = touch.clientX;
+      touchEndY = touch.clientY;
+
+      const dx = touchEndX - touchStartX;
+      const dy = touchEndY - touchStartY;
+
+      const horizontal =
+        Math.abs(dx) > 55 &&
+        Math.abs(dx) >
+        Math.abs(dy) * 1.4;
+
+      if (!horizontal) return;
+
+      if (dx < 0) {
+        nextSlide();
+      } else {
+        previousSlide();
+      }
+    },
+    { passive: true }
+  );
+
+  /* =========================================================
+     REVEAL CARDS
+  ========================================================= */
+
+  document
+    .querySelectorAll("[data-reveal]")
+    .forEach(card => {
+
+      card.addEventListener("click", () => {
+        card.classList.toggle("open");
+      });
+
+    });
+
+  /* =========================================================
+     FLIP CARDS
+  ========================================================= */
+
+  document
+    .querySelectorAll("[data-flip]")
+    .forEach(card => {
+
+      function flip() {
+        card.classList.toggle("flipped");
+      }
+
+      card.addEventListener("click", flip);
+
+      card.addEventListener("keydown", event => {
+        if (
+          event.key === "Enter" ||
+          event.code === "Space"
+        ) {
+          event.preventDefault();
+          flip();
+        }
+      });
+
+    });
+
+  /* =========================================================
+     DETAIL MODAL
+  ========================================================= */
+
+  function showModal(title, icon, text) {
+    modalTitle.textContent = title;
+    modalIcon.textContent = icon;
+    modalText.textContent = text;
+
+    modal.classList.add("open");
+  }
+
+  function hideModal() {
+    modal.classList.remove("open");
+  }
+
+  document
+    .querySelectorAll(".open-detail")
+    .forEach(button => {
+
+      button.addEventListener("click", event => {
+        event.stopPropagation();
+
+        showModal(
+          button.dataset.title || "Información",
+          button.dataset.icon || "📖",
+          button.dataset.text || ""
+        );
+      });
+
+    });
+
+  closeModal.addEventListener("click", hideModal);
+  modalContinue.addEventListener("click", hideModal);
+
+  modal.addEventListener("click", event => {
+    if (event.target === modal) {
+      hideModal();
+    }
+  });
+
+  /* =========================================================
+     QUIZ
+  ========================================================= */
+
+  const quizFeedback =
+    document.getElementById("quizFeedback");
+
+  document
+    .querySelectorAll("[data-answer]")
+    .forEach(option => {
+
+      option.addEventListener("click", () => {
+
+        const options =
+          option.parentElement
+            .querySelectorAll("[data-answer]");
+
+        options.forEach(item => {
+          item.classList.remove(
+            "correct",
+            "wrong"
+          );
+        });
+
+        if (
+          option.dataset.answer === "correct"
+        ) {
+          option.classList.add("correct");
+
+          quizFeedback.textContent =
+            "✓ Correcto. II Corintios anima a perseverar con fe y esperanza.";
+
+        } else {
+          option.classList.add("wrong");
+
+          options.forEach(item => {
+            if (
+              item.dataset.answer === "correct"
+            ) {
+              item.classList.add("correct");
+            }
+          });
+
+          quizFeedback.textContent =
+            "Revisa la respuesta resaltada en verde: las dificultades pueden enfrentarse con esperanza.";
+        }
+      });
+
+    });
+
+  /* =========================================================
+     PARALLAX BACKGROUNDS
+  ========================================================= */
+
+  function updateParallax(clientX, clientY) {
+    const rect = viewport.getBoundingClientRect();
+
+    const x =
+      (clientX - rect.left) /
+      rect.width;
+
+    const y =
+      (clientY - rect.top) /
+      rect.height;
+
+    const mx =
+      (x - .5) * 2;
+
+    const my =
+      (y - .5) * 2;
+
+    slides[currentSlide].style.setProperty(
+      "--mx",
+      mx.toFixed(3)
+    );
+
+    slides[currentSlide].style.setProperty(
+      "--my",
+      my.toFixed(3)
+    );
+  }
+
+  viewport.addEventListener(
+    "pointermove",
+    event => {
+      if (
+        event.pointerType === "mouse" ||
+        event.pointerType === "pen"
+      ) {
+        updateParallax(
+          event.clientX,
+          event.clientY
+        );
+      }
+    }
+  );
+
+  viewport.addEventListener(
+    "touchmove",
+    event => {
+      if (!event.touches.length) return;
+
+      updateParallax(
+        event.touches[0].clientX,
+        event.touches[0].clientY
+      );
+    },
+    { passive: true }
+  );
+
+  /* =========================================================
+     RESTART PRESENTATION
+  ========================================================= */
+
+  restartPresentation.addEventListener(
+    "click",
+    () => {
+      stopTimer();
+
+      slides[currentSlide]
+        .classList.remove("active");
+
+      currentSlide = 0;
+
+      slides[currentSlide]
+        .classList.add("active");
+
+      timeRemaining =
+        secondsPerSlide;
+
+      updateTimer();
+      updateInterface();
+    }
+  );
+
+  /* =========================================================
+     INITIALIZE
+  ========================================================= */
+
+  buildBullets();
+  updateInterface();
+  updateTimer();
+
+})();
+</script>
+
+</body>
+</html>
